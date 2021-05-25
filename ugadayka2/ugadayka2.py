@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 from random import *
 x = randint(1, 100)
 print(x)
-print('Добро пожаловать в числовую угадайку')
+print('Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ РІ С‡РёСЃР»РѕРІСѓСЋ СѓРіР°РґР°Р№РєСѓ')
 y = input()
 
 def is_valid(character):
