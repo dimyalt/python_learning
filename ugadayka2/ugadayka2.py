@@ -5,10 +5,15 @@ from random import *
 print('Добро пожаловать в числовую угадайку')
 newgame = True
 
-
+top_border = input('Введите максимальное число (по умолчанию 100): ')
+if top_border.isdigit() != True:
+    top_border = 100
+else:
+    top_border = int(top_border)
+    
 while newgame != False:
-    x = randint(1, 100)
-
+    x = randint(1, top_border)
+    print(x)
     def is_valid(character):
         if character.isdigit() == True and 0 < int(character) < 101 :
             return True
