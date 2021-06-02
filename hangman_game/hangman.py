@@ -1,8 +1,14 @@
-word = 'должность'
+from random import choice
+def wordlist():
+    word_pool = ['должность', 'вещество','директор','ключ','сердце','женщина','комиссия','объединение','компьютер',
+                 'экономика','эффективность','революция','обеспечение','литература','программа','телевидение']
+    return choice(word_pool)
+
+word = wordlist()
 word_list = list(word)
-#print(word_list)
 wordlist = ['-' for _ in range(len(word_list))]
 error = 0
+
 
 
 
