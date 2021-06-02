@@ -10,8 +10,9 @@ else:
     uppercase_letters_eng = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 text = input('Введите текст для шифровки/дешифровки: ')
 
+
 def encrypting(lang_en):
-    temp_char = 0
+    #temp_char = 0
     code = []
     result = ''
     if lang_en:
@@ -37,45 +38,45 @@ def encrypting(lang_en):
                 temp_char -= alphabet_leight
             result += lowercase_letters[temp_char]
             code.append(temp_char)
-        elif symbol.isalpha() != True:
+        elif not symbol.isalpha():
             temp_char = symbol.isalpha()
             code.append(symbol)
             result += symbol
     return result
 
+
 def decrypting(lang_en, step):
-        temp_char = 0
-        code = []
-        result = ''
-        if lang_en:
-            alphabet_leight = 32
-            lowercase_letters = lowercase_letters_rus
-            uppercase_letters = uppercase_letters_rus
-        else:
-            alphabet_leight = 26
-            lowercase_letters = lowercase_letters_eng
-            uppercase_letters = uppercase_letters_eng
+    temp_char = 0
+    code = []
+    result = ''
+    if lang_en:
+        alphabet_leight = 32
+        lowercase_letters = lowercase_letters_rus
+        uppercase_letters = uppercase_letters_rus
+    else:
+        alphabet_leight = 26
+        lowercase_letters = lowercase_letters_eng
+        uppercase_letters = uppercase_letters_eng
 
-        for i in range(len(text)):
-            symbol = text[i]
-            if uppercase_letters.find(symbol) != -1:
-                temp_char = uppercase_letters.find(symbol) - step
-                if temp_char > alphabet_leight:
-                    temp_char -= alphabet_leight
-                result += uppercase_letters[temp_char]
-                code.append(temp_char)
-            elif lowercase_letters.find(symbol) != -1:
-                temp_char = lowercase_letters.find(symbol) - step
-                if temp_char > alphabet_leight:
-                    temp_char -= alphabet_leight
-                result += lowercase_letters[temp_char]
-                code.append(temp_char)
-            elif symbol.isalpha() != True:
-                temp_char = symbol.isalpha()
-                code.append(symbol)
-                result += symbol
-        return result
-
+    for i in range(len(text)):
+        symbol = text[i]
+        if uppercase_letters.find(symbol) != -1:
+            temp_char = uppercase_letters.find(symbol) - step
+            if temp_char > alphabet_leight:
+                temp_char -= alphabet_leight
+            result += uppercase_letters[temp_char]
+            code.append(temp_char)
+        elif lowercase_letters.find(symbol) != -1:
+            temp_char = lowercase_letters.find(symbol) - step
+            if temp_char > alphabet_leight:
+                temp_char -= alphabet_leight
+            result += lowercase_letters[temp_char]
+            code.append(temp_char)
+        elif symbol.isalpha() != True:
+            temp_char = symbol.isalpha()
+            code.append(symbol)
+            result += symbol
+    return result
 
 
 if what:
