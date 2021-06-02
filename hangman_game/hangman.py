@@ -46,8 +46,6 @@ while True:
 
         if check_word(letter) == 0:
             error += 1
-        #print(check_word(letter), 'def letter')
-        #print(error, 'error')
     else:
         print('Очень жаль, вы проиграли...')
         print('Загаданное слово: ', word)
