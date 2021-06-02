@@ -46,9 +46,16 @@ while True:
 
         if check_word(letter) == 0:
             error += 1
+
+        if wordlist == word_list:
+            print('Поздравляю, вы выиграли!')
+            print('Загаданное слово: ', word)
+            break
     else:
         print('Очень жаль, вы проиграли...')
+        building(error)
         print('Загаданное слово: ', word)
+
         break
 
 
