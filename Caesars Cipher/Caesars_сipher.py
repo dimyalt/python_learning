@@ -12,7 +12,6 @@ text = input('Введите текст для шифровки/дешифров
 
 
 def encrypting(lang_en):
-    #temp_char = 0
     code = []
     result = ''
     if lang_en:

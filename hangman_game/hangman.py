@@ -22,21 +22,37 @@ def show_word(def_letter):
     return wordlist
 
 
-def building(def_error, counter=0):
-    pass
+def building(def_error):
+    if def_error == 0:
+        print('--------\n|\n|\n|\n|\n|\n_')
+    elif def_error == 1:
+        print('--------\n|      |\n|\n|\n|\n|\n_')
+    elif def_error == 2:
+        print('--------\n|      |\n|      о\n|\n|\n|\n_')
+    elif def_error == 3:
+        print('--------\n|      |\n|      о\n|      |\n|\n|\n_')
+    elif def_error == 4:
+        print('--------\n|      |\n|      о\n|     /|\ \n|\n|\n_')
+    elif def_error == 5:
+        print('--------\n|      |\n|      о\n|     /|\ \n|     / \ \n|\n_')
+
 
 while True:
+    if error != 5:
+        print('Слово: ', *wordlist)
+        building(error)
+        letter = input('Введите букву: ').lower()
+        show_word(check_word(letter))
 
-    #print('Слово: ', *show_word(check_word(letter)))
-    print('Слово: ', *wordlist)
-    letter = input('Введите букву: ').lower()
-    show_word(check_word(letter))
-    if check_word(letter) == 0:
-        error += 1
-    print(check_word(letter), 'def letter')
-    print(error, 'error')
-    #print(show_word(check_word(letter)))
-    #print(letter)
+        if check_word(letter) == 0:
+            error += 1
+        #print(check_word(letter), 'def letter')
+        #print(error, 'error')
+    else:
+        print('Очень жаль, вы проиграли...')
+        print('Загаданное слово: ', word)
+        break
+
 
 
 
