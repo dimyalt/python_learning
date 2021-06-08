@@ -1,8 +1,12 @@
 from random import choice
+
+
 def wordlist():
-    word_pool = ['должность', 'вещество','директор','ключ','сердце','женщина','комиссия','объединение','компьютер',
-                 'экономика','эффективность','революция','обеспечение','литература','программа','телевидение']
+    word_pool = ['должность', 'вещество', 'директор', 'ключ', 'сердце', 'женщина', 'комиссия', 'объединение',
+                 'компьютер', 'экономика', 'эффективность', 'революция', 'обеспечение', 'литература', 'программа',
+                 'телевидение']
     return choice(word_pool)
+
 
 word = wordlist()
 word_list = list(word)
@@ -10,11 +14,8 @@ wordlist = ['-' for _ in range(len(word_list))]
 error = 0
 
 
-
-
 def check_word(def_letter):
     if def_letter in word_list:
-        #print(def_letter, 'def_letter check_word')
         return def_letter
     else:
         return 0
@@ -63,12 +64,3 @@ while True:
         print('Загаданное слово: ', word)
 
         break
-
-
-
-
-
-
-
-
-
