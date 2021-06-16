@@ -55,31 +55,31 @@ for row in range(7, row_count):  # Начиная с 7й строки и до к
     print(reestr_row2)  # Отображаем список
     sheet_r.append(reestr_row2)  # Добавляем список в строку рабочего файла
 
-sheet_r_2 = reestr['Лист2']  # Создаем новую переменную и определяем активный лист рабочего файла
+sheet_r_2 = reestr["Лист2"]  # Создаем новую переменную и определяем активный лист рабочего файла
 _ = [sheet_r.append(row) for row in sheet_r_2.iter_rows(min_row=1, max_row=2, values_only=True)]  # Копируем строку из
 # второго листа в конец табличной части первого
 
 # sheet_r_maxrow = 'AD' + str(sheet_r.max_row)
 
-thin_border = Border(left=Side(style='thin'),  # Создаем переменную с описанием границ
-                     right=Side(style='thin'),
-                     top=Side(style='thin'),
-                     bottom=Side(style='thin'))
+thin_border = Border(left=Side(style="thin"),  # Создаем переменную с описанием границ
+                     right=Side(style="thin"),
+                     top=Side(style="thin"),
+                     bottom=Side(style="thin"))
 
 for row_ in sheet_r.iter_rows(min_row=23, max_col=30, max_row=sheet_r.max_row - 1):  # Определяем диапазон таблицы
     for cell in row_:  # Для каждой ячейки таблицы
         cell.border = thin_border  # Определяем границы ячейки
         cell.font = Font(size=7)  # Определяем размер шрифта ячейки
-        cell.alignment = Alignment(horizontal='center', wrapText=True)  # Определяем центрирование и расположение текста
+        cell.alignment = Alignment(horizontal="center", wrapText=True)  # Определяем центрирование и расположение текста
 
-column_m = sheet_r['M']  # Создаем диапазон на весь столбец М
-column_w = sheet_r['W']  # Создаем диапазон на весь столбец М
+column_m = sheet_r["M"]  # Создаем диапазон на весь столбец М
+column_w = sheet_r["W"]  # Создаем диапазон на весь столбец М
 numbers_string = sheet_r["C22":"AD22"]  # Создаем диапазон строки для нумерации столбцов
 for cell in column_m:  # Для всех ячеек в столбце М
-    cell.number_format = 'DD.MM.YYYY'  # Устанавливаем формат отображения даты ДД.ММ.ГГГГ
+    cell.number_format = "DD.MM.YYYY"  # Устанавливаем формат отображения даты ДД.ММ.ГГГГ
 
 for cell in column_w:  # Для всех ячеек в столбце W
-    cell.number_format = 'DD.MM.YYYY'  # Устанавливаем формат отображения даты ДД.ММ.ГГГГ
+    cell.number_format = "DD.MM.YYYY"  # Устанавливаем формат отображения даты ДД.ММ.ГГГГ
 
 for row in numbers_string:  # Для всех ячеек диапазона
     counter = 2  # Стартовое значение счетчика (так как первая строка состоит из двух столбцов, я не стал их трогать)
