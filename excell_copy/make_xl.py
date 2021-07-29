@@ -12,7 +12,8 @@ reestr.iso_dates = True  # Разрешаем использовать в дат
 def obrabotka_tablici(book):
     sheet = book.active  # Определяем активный лист исходного файла
     book.iso_dates = True  # Разрешаем использовать в датах формат ISO 8601
-    row_count = sheet.max_row - 3  # Переменная, указывающая на количество строк в табличной части
+    print(sheet.max_row)
+    row_count = sheet.max_row - 6  # Переменная, указывающая на количество строк в табличной части
     for row in range(7, row_count):  # Начиная с 7й строки и до конца строк в табличной части
         reestr_row2 = ['' for _ in
                        range(sheet_r.max_column)]  # Создаем массив на все столбцы с пустыми значениями в ячейках
