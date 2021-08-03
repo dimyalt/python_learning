@@ -3,7 +3,7 @@ import telebot
 import time
 from datetime import date
 import pandas as pd
-
+from telebot import types
 
 file = load_workbook("sample.xlsx")  # Открываем рабочую книгу / Opening the workbook
 list_ = file.active  # Создали переменную для активного листа / Create a variable for the active sheet
@@ -17,35 +17,33 @@ get_name_user = ''
 
 
 bot = telebot.TeleBot(
-    'XXXXXXX')  # Подключили токен телеграмм бота / We connected the bot's telegram token
+    '1638491301:AAHqxXK9Iem9rC2fSz5mPGv_hWmJrrTnaFk')  # Подключили токен телеграмм бота / We connected the bot's
+# telegram token
 
-#startdate = ''
-
-
-#keyboard1 = telebot.types.ReplyKeyboardMarkup(<span class="hljs-keyword">True</span>, <span class="hljs-keyword">True</span>)
-#keyboard1.row('Привет', 'Пока')
 
 @bot.message_handler(commands=['start'])  # Обработка команды "start" / Processing the "start" command
 def start_message(message):
-    #otvet = types.InlineKeyboardMarkup(row_width=2)
-    #button1 = types.InlineKeyboardButton(" Хорошо", callback_data='good')
-    #button2 = types.InlineKeyboardButton(" Плохо", callback_data='bad')
-    #otvet.add(button1, button2)
-    #bot.send_message(message.chat.id,
-                    # 'Привет, ты написал мне /start , более подробно узнать обо мне - пиши /help',
-                    # reply_markup=keyboard1))  # Ответ бота на команду "start" / Bot response to "start" command
-    #bot.send_message(message.chat.id,
-                     #'Привет, ты написал мне /start , более подробно узнать обо мне - пиши /help',
-                     #reply_markup=otvet)  # Ответ бота на команду "start" / Bot response to "start" command
-    bot.send_message(message.chat.id,
-                     'Привет, ты написал мне /start , более подробно узнать обо мне - пиши /help')  # Ответ бота на команду "start" / Bot response to "start" command
+    markup = types.InlineKeyboardMarkup()
+    button_game = types.InlineKeyboardButton('Следующая игра', callback_data='игра')
+    button_games = types.InlineKeyboardButton('Ближайшие игры', callback_data='игры')
+    button_info = types.InlineKeyboardButton('Что-бы добавить - напиши "добавить"', callback_data='инфо')
+    # button_add = types.InlineKeyboardButton('Добавить мероприятие', callback_data='добавить')
+    # button_porting = types.InlineKeyboardButton('Редактировать', callback_data='перенос')
+    markup.row(button_game, button_games)
+    markup.row(button_info)
+    msg = bot.send_message(message.chat.id,
+                           'Привет, ты написал мне /start , более подробно узнать обо мне - пиши /help',
+                           reply_markup=markup)
+    # Ответ бота на команду "start" / Bot response to "start" command
+    print(msg)
 
 @bot.message_handler(commands=['help'])  # Обработка команды "help" / Processing the "help" command
 def help_message(message):
     bot.send_message(message.chat.id, 'Написал мне /help - держи краткую справку:\nНапиши "игра" - получишь информацию '
                                       'про ближайшее мероприятие.\nНапиши "игры" - расскажу о ближайших 5 мероприятиях.\n'
                                       'Хочешь рассказать об игре - так и пиши - "добавить".\nРедактировать добавленную тобой '
-                                      'информацию можно, написав "перенос" (не работает)')  # Ответ бота на команду "help" / Bot response to "help" command
+                                      'информацию можно, написав "перенос" (не работает)')  # Ответ бота на команду "help"
+    # / Bot response to "help" command
 
 
 @bot.message_handler(content_types=['text'])
@@ -56,18 +54,19 @@ def send_text(message):
         data = []
         bot.send_message(message.from_user.id,
                          "Ok, давай добавим новый движ.. \nНапиши, когда начало (ддммгг, например:"
-                         " 01012021):", );
+                         " 01012021):")
 
-        bot.register_next_step_handler(message, get_start_date);  # следующий шаг – функция get_start_date
+        bot.register_next_step_handler(message, get_start_date)  # следующий шаг – функция get_start_date
 
     elif message.text.lower() == 'игра':
         current_date = date.today().strftime('%d.%m.%Y')
         current_date_sort = date.today().strftime('%Y-%m-%d')
         onegame(current_date_sort)
         one_game = onegame(current_date_sort)
-        bot.send_message(message.from_user.id, f'Сегодня {current_date}\nБлижайшая игра c {one_game[0]} по {one_game[1]}\n'
+        bot.send_message(message.from_user.id, f'Сегодня {current_date}\n\U0001F538 \U0001F538 \U0001F538 \U0001F538 \n'
+                                               f'Ближайшая игра c {one_game[0]} по {one_game[1]}\n'
                                                f'{one_game[2]} от {one_game[3]}\n'
-                                               f'тип игры: {one_game[4]}\n');
+                                               f'тип игры: {one_game[4]}\n')
         print(one_game)
 
     elif message.text.lower() == 'игры':
@@ -75,94 +74,140 @@ def send_text(message):
         current_date_sort = date.today().strftime('%Y-%m-%d')
         games(current_date_sort)
         many_games = games(current_date_sort)
-        #print(games(current_date_sort))
-        bot.send_message(message.from_user.id, f'Сегодня {current_date}\nБлижайшие мероприятия:\n1. С {many_games[0]} по {many_games[1]}\n'
+        # print(games(current_date_sort))
+        bot.send_message(message.from_user.id, f'Сегодня {current_date}\nБлижайшие мероприятия:\n1. С {many_games[0]} '
+                                               f'по {many_games[1]}\n'
                                                f'{many_games[2]} от {many_games[3]}\n'
-                                               f'тип игры: {many_games[4]}\n2. С {many_games[5]} по {many_games[6]}\n'
+                                               f'тип игры: {many_games[4]}\n\U0001F538 \U0001F538 \U0001F538 \U0001F538 \n'
+                                               f'2. С {many_games[5]} по {many_games[6]}\n'
                                                f'{many_games[7]} от {many_games[8]}\n'
-                                               f'тип игры: {many_games[9]}\n3. С {many_games[10]} по {many_games[11]}\n'
+                                               f'тип игры: {many_games[9]}\n\U0001F538 \U0001F538 \U0001F538 \U0001F538 \n'
+                                               f'3. С {many_games[10]} по {many_games[11]}\n'
                                                f'{many_games[12]} от {many_games[13]}\n'
-                                               f'тип игры: {many_games[14]}\n4. С {many_games[15]} по {many_games[16]}\n'
+                                               f'тип игры: {many_games[14]}\n\U0001F538 \U0001F538 \U0001F538 \U0001F538 \n'
+                                               f'4. С {many_games[15]} по {many_games[16]}\n'
                                                f'{many_games[17]} от {many_games[18]}\n'
-                                               f'тип игры: {many_games[19]}\n5. С {many_games[20]} по {many_games[21]}\n'
+                                               f'тип игры: {many_games[19]}\n\U0001F538 \U0001F538 \U0001F538 \U0001F538 \n'
+                                               f'5. С {many_games[20]} по {many_games[21]}\n'
                                                f'{many_games[22]} от {many_games[23]}\n'
-                                               f'тип игры: {many_games[24]}\n');
+                                               f'тип игры: {many_games[24]}\n')
     elif message.text.lower() == 'перенос':
         porting()
-        bot.send_message(message.from_user.id, "Я еще не умею переносить =( Напиши /help.");
+        bot.send_message(message.from_user.id, "Я еще не умею переносить =( Напиши /help.")
     else:
-        bot.send_message(message.from_user.id, "Я тебя не понимаю. Напиши /help.");
+        bot.send_message(message.from_user.id, "Я тебя не понимаю. Напиши /help.")
 
-#print(startdate, 'startdate')
+
+@bot.callback_query_handler(func=lambda call: True)
+# send_text(call)
+def handle(call):
+    # bot.send_message(call.message.chat.id, 'Data: {}'.format(str(call.data)))
+    message = str(call.data)
+    if message.lower() == 'игра':
+        current_date = date.today().strftime('%d.%m.%Y')
+        current_date_sort = date.today().strftime('%Y-%m-%d')
+        onegame(current_date_sort)
+        one_game = onegame(current_date_sort)
+        bot.send_message(call.message.chat.id,
+                         f'Сегодня {current_date}\n\U0001F538 \U0001F538 \U0001F538 \U0001F538 \nБлижайшая игра c '
+                         f'{one_game[0]} по {one_game[1]}\n'
+                         f'{one_game[2]} от {one_game[3]}\n'
+                         f'тип игры: {one_game[4]}\n')
+        print(one_game)
+    elif message.lower() == 'игры':
+        current_date = date.today().strftime('%d.%m.%Y')
+        current_date_sort = date.today().strftime('%Y-%m-%d')
+        games(current_date_sort)
+        many_games = games(current_date_sort)
+        # print(games(current_date_sort))
+        bot.send_message(call.message.chat.id, f'Сегодня {current_date}\nБлижайшие мероприятия:\n1. С {many_games[0]} '
+                                               f'по {many_games[1]}\n'
+                                               f'{many_games[2]} от {many_games[3]}\n'
+                                               f'тип игры: {many_games[4]}\n\U0001F538 \U0001F538 \U0001F538 \U0001F538 \n'
+                                               f'2. С {many_games[5]} по {many_games[6]}\n'
+                                               f'{many_games[7]} от {many_games[8]}\n'
+                                               f'тип игры: {many_games[9]}\n\U0001F538 \U0001F538 \U0001F538 \U0001F538 \n'
+                                               f'3. С {many_games[10]} по {many_games[11]}\n'
+                                               f'{many_games[12]} от {many_games[13]}\n'
+                                               f'тип игры: {many_games[14]}\n\U0001F538 \U0001F538 \U0001F538 \U0001F538 \n'
+                                               f'4. С {many_games[15]} по {many_games[16]}\n'
+                                               f'{many_games[17]} от {many_games[18]}\n'
+                                               f'тип игры: {many_games[19]}\n\U0001F538 \U0001F538 \U0001F538 \U0001F538 \n'
+                                               f'5. С {many_games[20]} по {many_games[21]}\n'
+                                               f'{many_games[22]} от {many_games[23]}\n'
+                                               f'тип игры: {many_games[24]}\n')
+
+    print(message, 'calbackdata')
+    print(type(message))
+
+
 print('start')
+
 
 def date_check(date):  # Функция проверки правильности написания даты
     try:
         date = time.strptime(date, '%d%m%Y')  # Если дата заполнена в формате ддммгггг
         true_date = time.strftime('%d.%m.%Y', date)  # Создаем переменную даты в формате дд.мм.гггг (для вывода пользователю)
         sort_date = time.strftime('%Y-%m-%d', date)  # Создаем переменную даты в формате гггг-мм-дд (для функции сортировки)
-        return (true_date, sort_date)  # Возвращаем даты
-    except ValueError: # Если дата не заполнена в формате ддммгггг появляется ошибка
+        return(true_date, sort_date)  # Возвращаем даты
+    except ValueError:  # Если дата не заполнена в формате ддммгггг появляется ошибка
         return False
+
 
 def get_start_date(message):
     global start_date
     start_date = message.text
     if date_check(start_date) == False:
-        bot.send_message(message.from_user.id, 'Неправильный формат даты! Попробуй еще раз (например 01012021):');
-        bot.register_next_step_handler(message, get_start_date);
+        bot.send_message(message.from_user.id, 'Неправильный формат даты! Попробуй еще раз (например 01012021):')
+        bot.register_next_step_handler(message, get_start_date)
     else:
         user_date, sorting_date = date_check(start_date)
         data.append(user_date)
         data.append(sorting_date)
-        #data.append(date_check(start_date))
-        #data.append(date_check(start_date[1]))
-        #sort_date = time.strftime('%d-%m-%Y', date_check(start_date))
-        #data.append(sort_date)
-        bot.send_message(message.from_user.id, 'Когда конец?');
-        bot.register_next_step_handler(message, get_end_date);
+        bot.send_message(message.from_user.id, 'Когда конец?')
+        bot.register_next_step_handler(message, get_end_date)
 
 def get_end_date(message):
     global end_date;
     end_date = message.text
     if date_check(end_date) == False:
-        bot.send_message(message.from_user.id, 'Неправильный формат даты! Попробуй еще раз (например 01012021):');
-        bot.register_next_step_handler(message, get_end_date);
+        bot.send_message(message.from_user.id, 'Неправильный формат даты! Попробуй еще раз (например 01012021):')
+        bot.register_next_step_handler(message, get_end_date)
     else:
         user_date, sorting_date = date_check(end_date)
         data.append(user_date)
         #data.append(date_check(end_date))
-        bot.send_message(message.from_user.id, 'Название мероприятия?');
-        bot.register_next_step_handler(message, get_name_game);
+        bot.send_message(message.from_user.id, 'Название мероприятия?')
+        bot.register_next_step_handler(message, get_name_game)
 
 def get_name_game(message):
     global get_name_game;
-    get_name_game = message.text;
+    get_name_game = message.text
     data.append(get_name_game)
-    bot.send_message(message.from_user.id, 'Кто организатор?');
-    bot.register_next_step_handler(message, get_orgname);
+    bot.send_message(message.from_user.id, 'Кто организатор?')
+    bot.register_next_step_handler(message, get_orgname)
     print(data)
 
 def get_orgname(message):
     global get_orgname;
-    get_org_name = message.text;
+    get_org_name = message.text
     data.append(get_org_name)
-    bot.send_message(message.from_user.id, 'Тип игры?');
-    bot.register_next_step_handler(message, get_type_game);
+    bot.send_message(message.from_user.id, 'Тип игры?')
+    bot.register_next_step_handler(message, get_type_game)
     print(data)
 
 def get_type_game(message):
     global get_type_game;
     global get_name_user;
-    get_type_game = message.text;
-    get_name_user = message.from_user.username;
+    get_type_game = message.text
+    get_name_user = message.from_user.username
     data.append(get_type_game)
     data.append(get_name_user)
     get_id_game()
     list_.append(data)
     file.save("sample.xlsx")
     sorting()
-    bot.send_message(message.from_user.id, f'Ok, записал. ID твоей записи {data[-1]}');
+    bot.send_message(message.from_user.id, f'Ok, записал. \U0001F194 твоей записи {data[-1]}')
     print(list_, "list_", data, "data")
 
 def get_id_game():
