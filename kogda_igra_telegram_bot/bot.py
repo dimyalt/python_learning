@@ -17,7 +17,7 @@ get_name_user = ''
 
 
 bot = telebot.TeleBot(
-    '')  # Подключили токен телеграмм бота / We connected the bot's telegram token
+    'XXXXXXX')  # Подключили токен телеграмм бота / We connected the bot's telegram token
 
 #startdate = ''
 
@@ -158,12 +158,23 @@ def get_type_game(message):
     get_name_user = message.from_user.username;
     data.append(get_type_game)
     data.append(get_name_user)
+    get_id_game()
     list_.append(data)
     file.save("sample.xlsx")
     sorting()
-    bot.send_message(message.from_user.id, 'Ok, записал');
+    bot.send_message(message.from_user.id, f'Ok, записал. ID твоей записи {data[-1]}');
     print(list_, "list_", data, "data")
 
+def get_id_game():
+    global get_id_game;
+    #id_cell = list_.cell(row=list_.max_row, column=list_.max_column - 1)
+    id_cell = 1  # Переменная, в которую запишем максимальное значение ID
+    for row in range(2, list_.max_row + 1):  # Для строк со второй и до последней
+        for column in "H":  # Для столбца H в котором указан ID
+            cell_name = "{}{}".format(column, row)  # Получаем адрес ячейки
+            if list_[cell_name].value > id_cell:  # Если значение ячейки больше значения id_cell
+                id_cell = list_[cell_name].value
+    data.append(id_cell+1)
 
 '''def onegame(current_date_sort):
     temp = []
@@ -221,8 +232,8 @@ def sorting():
     df = xl.parse("testexel")  # Открываем pandas активный лист
     df = df.sort_values(by="Сортировка")  # Сортируем по возрастанию столбец Сортировка (sort_date ('%Y-%m-%d'))
     writer = pd.ExcelWriter('sample.xlsx')  # Записываем файл
-    df.to_excel(writer, sheet_name='testexel', columns=["Начало", "Сортировка", "Конец", "Название", "Организатор", "Тип", "Владелец"
-    ], index=False)  # Выбираем какие столбцы записывать
+    df.to_excel(writer, sheet_name='testexel', columns=["Начало", "Сортировка", "Конец", "Название", "Организатор",
+                                                        "Тип", "Владелец", "ID"], index=False)  # Выбираем какие столбцы записывать
     writer.save()  #  Сохраняем
     # Просмотр таблицы
     for i in range(0, list_.max_row):  # Для всех строк от 0 до максимальной
