@@ -16,7 +16,7 @@ get_org_name = ''
 get_name_user = ''
 
 bot = telebot.TeleBot(
-    'XXXXXXX')  # Подключили токен телеграмм бота / We connected the bot's
+    'XXXXXX')  # Подключили токен телеграмм бота / We connected the bot's
 # telegram token
 
 
@@ -99,6 +99,8 @@ def send_text(message):
         for i in user_list:
             bot.send_message(message.from_user.id, f'ID {i[7]}\nС {i[0]} по {i[2]}\nНазвание: {i[3]}\nОрганизатор: '
                                                    f'{i[4]}\nТип: {i[5]}')
+        bot.send_message(message.from_user.id, 'Какую запись редактируем? (Введи ID записи):')
+        bot.register_next_step_handler(message, edit_buttons)
     else:
         bot.send_message(message.from_user.id, "Я тебя не понимаю. Напиши /help.")
 
@@ -141,9 +143,13 @@ def handle(call):
                                                f'5. С {many_games[20]} по {many_games[21]}\n'
                                                f'{many_games[22]} от {many_games[23]}\n'
                                                f'тип игры: {many_games[24]}\n')
+    elif message.lower() == 'название':
+        bot.send_message(call.message.chat.id, f'Редактируем название')
+
 
     print(message, 'calbackdata')
     print(type(message))
+
 
 
 print('start')
@@ -300,15 +306,7 @@ def porting(message, current_date_sort):
         if i in temp_date:
             temp_result.append(i) # Итоговое значение ячейки добавляем в список
     print(temp_result)
-    '''for _ in range(list_.max_row):
-        for row in list_.iter_rows(min_row=temp_result[0], max_col=8, max_row=temp_result[0]):  # Для диапазона начиная со строки
-            # № которой идет 0 в списке и на протяжении всех столбцов
-            for cell in row:  # Для всех ячеек
-                temp.append(cell.value)  # Добавляем во временный список значение ячеек'''
-    '''for i in range(0, list_.max_row):
-        for col in list_.iter_cols(1, list_.max_column):
-            print(col[i].value, end="\t\t")
-        print('')'''
+
 
     for row in list_.iter_rows(min_row=temp_result[0], max_col=8, max_row=list_.max_row):  # Для диапазона начиная со строки
             # № которой идет 0 в списке и на протяжении всех столбцов
@@ -320,6 +318,27 @@ def porting(message, current_date_sort):
     print(temp)
     print(result)
     return(result)
+
+'''def edit_game(message):
+    id_game = message.text
+    print(id_game)'''
+
+def edit_buttons(message):
+    id_game = message.text # В месседже получаем ID игры, которую будем редактировать
+    markup = types.InlineKeyboardMarkup()
+    button_startend_game = types.InlineKeyboardButton('Даты проведения', callback_data='даты')
+    #  button_end_game = types.InlineKeyboardButton('Конец', callback_data='конец')
+    button_name_game = types.InlineKeyboardButton('Название', callback_data='название')
+    button_type_game = types.InlineKeyboardButton('Тип', callback_data='тип')
+    button_cancel_game = types.InlineKeyboardButton('Отмена', callback_data='отмена')
+    markup.row(button_startend_game, button_name_game)
+    markup.row(button_type_game, button_cancel_game)
+    print(id_game, 'id_game')
+    bot.send_message(message.chat.id, 'Выбери что редактируем?', reply_markup=markup)
+    #editing(call)
+
+    #bot.register_next_step_handler(message, editing)
+    # @bot.callback_query_handler(func=lambda call: True)
 
 
 def games(current_date_sort):
