@@ -14,9 +14,10 @@ end_date = ''
 get_name_game = ''
 get_org_name = ''
 get_name_user = ''
+id_game = ''
 
 bot = telebot.TeleBot(
-    'XXXXXX')  # Подключили токен телеграмм бота / We connected the bot's
+    'XXXXXXXX')  # Подключили токен телеграмм бота / We connected the bot's
 # telegram token
 
 
@@ -144,8 +145,27 @@ def handle(call):
                                                f'{many_games[22]} от {many_games[23]}\n'
                                                f'тип игры: {many_games[24]}\n')
     elif message.lower() == 'название':
-        bot.send_message(call.message.chat.id, f'Редактируем название')
+        result_name_type_game = line_address_detection(id_game, message)
+        msg = bot.send_message(call.message.chat.id, f'Меняем название "{list_[result_name_type_game].value}" на:')
+        bot.register_next_step_handler(msg, correct, result_name_type_game)
 
+    elif message.lower() == 'тип':
+        result_name_type_game = line_address_detection(id_game, message)
+        msg = bot.send_message(call.message.chat.id, f'Меняем тип "{list_[result_name_type_game].value}" на:')
+        bot.register_next_step_handler(msg, correct, result_name_type_game)
+
+    elif message.lower() == 'отмена':
+        result_cell_game = line_address_detection(id_game, message)
+        result_cancel_game = int(result_cell_game[1:])
+        bot.send_message(call.message.chat.id, f'Отмена мероприятия с ID: "{list_[result_cell_game].value}"')
+        list_.delete_rows(result_cancel_game)
+        file.save("sample.xlsx")
+        sorting()
+        bot.send_message(message.from_user.id, f'Удалено.')
+
+    elif message.lower() == 'даты':
+        result_name = line_address_detection(id_game, message)
+        bot.send_message(call.message.chat.id, f'Меняем даты "{list_[result_name].value}" на:')
 
     print(message, 'calbackdata')
     print(type(message))
@@ -236,7 +256,7 @@ def get_id_game():
         for column in "H":  # Для столбца H в котором указан ID
             cell_name = "{}{}".format(column, row)  # Получаем адрес ячейки
             if list_[cell_name].value > id_cell:  # Если значение ячейки больше значения id_cell
-                id_cell = list_[cell_name].value
+                id_cell = list_[cell_name].value  # Присваеваем значение ячейки переменной id_cell
     data.append(id_cell + 1)
 
 
@@ -324,6 +344,7 @@ def porting(message, current_date_sort):
     print(id_game)'''
 
 def edit_buttons(message):
+    global id_game
     id_game = message.text # В месседже получаем ID игры, которую будем редактировать
     markup = types.InlineKeyboardMarkup()
     button_startend_game = types.InlineKeyboardButton('Даты проведения', callback_data='даты')
@@ -333,12 +354,45 @@ def edit_buttons(message):
     button_cancel_game = types.InlineKeyboardButton('Отмена', callback_data='отмена')
     markup.row(button_startend_game, button_name_game)
     markup.row(button_type_game, button_cancel_game)
-    print(id_game, 'id_game')
+    #print(id_game, 'id_game')
     bot.send_message(message.chat.id, 'Выбери что редактируем?', reply_markup=markup)
     #editing(call)
 
     #bot.register_next_step_handler(message, editing)
     # @bot.callback_query_handler(func=lambda call: True)
+
+def line_address_detection(id_game, message):
+    #print(id_game, 'id_game')
+    #print(message, 'message')
+    #bot.send_message(call.message.chat.id, f'Название {id_game}')
+    for row in range(2, list_.max_row + 1):  # Для строк со второй и до последней
+        for column in "H":  # Для столбца H в котором указано ID мероприятия
+            cell_name = "{}{}".format(column, row)  # Получаем адрес ячейки
+            string_num = "{}".format(row)  # Получаем номер строки
+            #print(cell_name)
+            #print(list_[cell_name].value)
+            if str(list_[cell_name].value) == id_game:  # Если значение в ячейке совпадает с введенным ID
+                if message == 'название':
+                #print(list_[cell_name].value)
+                    name_cell_adr = 'D' + string_num  #  Создаем переменную с адресом ячейки с названием мероприятия
+                elif message == 'тип':
+                    name_cell_adr = 'F' + string_num  # Создаем переменную с адресом ячейки с типом мероприятия
+                elif message == 'отмена':
+                    name_cell_adr = 'H' + string_num  # Создаем переменную с адресом ячейки с ID мероприятия
+                elif message == 'даты':
+                    name_cell_adr = 'A' + string_num  # Создаем переменную с адресом ячейки с началом мероприятия
+                #print(cell_name)
+                #print(string_num)
+                #print(name_cell_adr, list_[name_cell_adr].value)
+                #bot.send_message(message.chat.id, list_[name_cell_adr].value, 'Заменить на:')
+                return(name_cell_adr)  # Возвращает адрес ячейки
+
+def correct(message, result_name_type_game):
+    print(message.text, 'message', result_name_type_game, 'result_name_type_game')
+    list_[result_name_type_game] = message.text
+    file.save("sample.xlsx")
+    sorting()
+    bot.send_message(message.from_user.id, f'Ok, записал.')
 
 
 def games(current_date_sort):
