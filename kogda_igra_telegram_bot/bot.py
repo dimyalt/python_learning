@@ -14,17 +14,18 @@ start_date = ''  # Строка, в которую добавляется инф
 # from the message is added (Start Date)
 end_date = ''  # Строка, в которую добавляется информация из сообщения (Дата окончания) / String where the information
 # from the message is added (End Date)
-get_name_game = ''  # Строка, в которую добавляется информация из сообщения (Название) / String where the information
+get_name_game_ = ''  # Строка, в которую добавляется информация из сообщения (Название) / String where the information
 # from the message is added (Name)
 get_org_name = ''  # Строка, в которую добавляется информация из сообщения (Организатор) / String where the information
 # from the message is added (Organizer)
-get_name_user = '' # Строка, в которую добавляется информация из сообщения (Имя пользователя) / String where the
+get_name_user = ''  # Строка, в которую добавляется информация из сообщения (Имя пользователя) / String where the
 # information from the message is added (Username)
 id_game = ''  # Строка, в которую генерируется информация (ID мероприятия) / The string in which the information is
 # generated (event ID)
+get_type_game_ = ''
 
 bot = telebot.TeleBot(
-    'XXXXXXXX')  # Подключили токен телеграмм бота / We connected the bot's
+    'XXXXXXX')  # Подключили токен телеграмм бота / We connected the bot's
 # telegram token
 
 
@@ -52,13 +53,13 @@ def start_message(message):  # Функция обработки сообщен�
     # button to edit the event
     msg = bot.send_message(message.chat.id,
                            'Привет, ты написал мне /start , более подробно узнать обо мне - пиши /help',
-                           reply_markup=markup) # Ответ бота на команду "start" / Bot response to "start" command
+                           reply_markup=markup)  # Ответ бота на команду "start" / Bot response to "start" command
 
 
 @bot.message_handler(commands=['help'])  # Обработка команды "help" / Processing the "help" command
 def help_message(message):  # Функция обработки сообщения "help" / Function for processing the "help" message
     bot.send_message(message.chat.id, 'Написал мне /help - держи краткую справку:\nНапиши "игра" - получишь информацию '
-                                      'про ближайшее мероприятие.\nНапиши "игры" - расскажу о ближайших 5 мероприятиях.\n'
+                                      'про следующее мероприятие.\nНапиши "игры" - расскажу о ближайших 5 мероприятиях.\n'
                                       'Хочешь рассказать об игре - так и пиши - "добавить".\nРедактировать добавленную тобой '
                                       'информацию можно, написав "перенос" (не работает)')  # Ответ бота на команду "help"
     # / Bot response to "help" command
@@ -72,7 +73,7 @@ def send_text(message):  # Функция обработки текстовых 
         data = []  # data равна пустому списку / data equals empty list
         bot.send_message(message.from_user.id,
                          "Ok, давай добавим новый движ.. \nНапиши, когда начало (ддммгг, например:"
-                         " 01012021):") # Бот запрашивает дату начала мероприятия / The bot asks for the start date of
+                         " 01012021):")  # Бот запрашивает дату начала мероприятия / The bot asks for the start date of
         # the event
         bot.register_next_step_handler(message, get_start_date)  # следующий шаг – функция get_start_date / The next
         # step is the get_start_date function
@@ -134,7 +135,7 @@ def send_text(message):  # Функция обработки текстовых 
         bot.send_message(message.from_user.id, 'Какую запись редактируем? (Введи ID записи):')  # Бот спрашивает ID
         # записи, которую будет редактировать пользователь / The bot asks for the ID of the record to be edited by the
         # user
-        bot.register_next_step_handler(message, edit_buttons) # Бот переходит к выполнению функции edit_buttons
+        bot.register_next_step_handler(message, edit_buttons)  # Бот переходит к выполнению функции edit_buttons
         # (вывода кнопок редактирования записи) / The bot proceeds to execute the edit_buttons function (outputs the
         # edit buttons of the record)
 
@@ -226,7 +227,7 @@ def handle(call):  # Функция обработки нажатия кнопо
         # result_cancel_game / Delete the line under the number passed by the variable result_cancel_game
         file.save("sample.xlsx")  # Сохраняем таблицу / Save the table
         sorting()  # Запускаем функцию сортировки записей по дате / Start the function of sorting records by date
-        bot.send_message(message.from_user.id, f'Удалено.')  # Бот сообщает об удалении / The bot reports deletion
+        bot.send_message(call.message.chat.id, f'Удалено.')  # Бот сообщает об удалении / The bot reports deletion
 
     elif message == 'даты':   # Если значение кнопки "даты" / If the value of the "dates" button
         result_start_date_game = line_address_detection(id_game, message)  # Создаем переменную result_start_date_game со
@@ -238,7 +239,9 @@ def handle(call):  # Функция обработки нажатия кнопо
         # функции correct_start_date с параметром result_start_date_game / The bot proceeds to execute the
         # correct_start_date function with the result_start_date_game parameter
 
+
 print('start')
+
 
 def date_check(date):  # Функция проверки правильности написания даты при вводе нового мероприятия / Function to check
     # the correct spelling of the date when entering a new event
@@ -251,10 +254,11 @@ def date_check(date):  # Функция проверки правильност�
         sort_date = time.strftime('%Y-%m-%d',
                                   date)  # Создаем переменную даты в формате гггг-мм-дд (для функции сортировки) /
         # Create a date variable in the format yyyy-mm-dd (for the sorting function)
-        return (true_date, sort_date)  # Возвращаем даты / Returning dates
+        return true_date, sort_date  # Возвращаем даты / Returning dates
     except ValueError:  # Если дата не заполнена в формате ддммгггг появляется ошибка / If the date is not filled in
         # the format ddmmyyyy, an error appears
         return False  # Возвращаем False / Return False
+
 
 def get_start_date(message):  # Функция получения даты начала мероприятия / Function for getting the start date of the
     # event
@@ -262,7 +266,7 @@ def get_start_date(message):  # Функция получения даты на�
     # variable start_date to change it in the function
     start_date = message.text  # Создаем переменную start_date со значением текста сообщения / Create a variable
     # start_date with the value of the message text
-    if date_check(start_date) == False:  # Если функция проверки даты date_check передала False / If the date_check
+    if not date_check(start_date):  # Если функция проверки даты date_check передала False / If the date_check
         # function passes False
         bot.send_message(message.from_user.id, 'Неправильный формат даты! Попробуй еще раз (например 01012021):')  # Бот
         # отправляет сообщение о неверной дате / The bot sends a message about the wrong date
@@ -282,11 +286,12 @@ def get_start_date(message):  # Функция получения даты на�
         bot.register_next_step_handler(message, get_end_date)  # Бот переходит к выполнению функции get_end_date / The
         # bot proceeds to the get_end_date function
 
+
 def correct_start_date(message, result_start_date_game):  # Функция изменения даты начала мероприятия / Function for
     # changing the start date of an event
     correct_startdate = message.text  # Создаем переменную correct_startdate со значением текста сообщения / Create a
     # variable correct_startdate with the value of the message text
-    if date_check(correct_startdate) == False:  # Если функция проверки даты date_check передала False / If the
+    if not date_check(correct_startdate):  # Если функция проверки даты date_check передала False / If the
         # date_check function passes False
         msg = bot.send_message(message.from_user.id, 'Неправильный формат даты! Попробуй еще раз (например 01012021):')
         # Бот отправляет сообщение о неверной дате / The bot sends a message about the wrong date
@@ -320,11 +325,12 @@ def correct_start_date(message, result_start_date_game):  # Функция из�
         # функции correct_end_date с параметром result_correct_end_date / The bot proceeds to the correct_end_date
         # function with the result_correct_end_date parameter
 
+
 def correct_end_date(message, result_correct_end_date):  # Функция изменения даты конца мероприятия / Function for
     # changing the end date of the event
     correct_enddate = message.text  # Создаем переменную correct_enddate со значением текста сообщения / Create a
     # correct_enddate variable with the value of the message text
-    if date_check(correct_enddate) == False:  # Если функция проверки даты date_check передала False / If the
+    if not date_check(correct_enddate):  # Если функция проверки даты date_check передала False / If the
         # date_check function passes False
         msg = bot.send_message(message.from_user.id, 'Неправильный формат даты! Попробуй еще раз (например 01012021):')
         # Бот отправляет сообщение о неверной дате / The bot sends a message about the wrong date
@@ -342,13 +348,14 @@ def correct_end_date(message, result_correct_end_date):  # Функция изм
         bot.send_message(message.from_user.id, f'Ok, дата окончания изменена.')  # Бот сообщает, что дата окончания
         # мероприятия изменена / The bot reports that the end date of the event has been changed
 
+
 def get_end_date(message):  # Функция получения даты окончания мероприятия / Function for getting the end date of the
     # event
     global end_date  # Объявляем глобальную переменную end_date для изменения ее в функции / Declare the global
     # variable end_date to change it in the function
     end_date = message.text  # Создаем переменную end_date со значением текста сообщения / Create a variable
     # end_date with the value of the message text
-    if date_check(end_date) == False:  # Если функция проверки даты date_check передала False / If the date_check
+    if not date_check(end_date):  # Если функция проверки даты date_check передала False / If the date_check
         # function passes False
         bot.send_message(message.from_user.id, 'Неправильный формат даты! Попробуй еще раз (например 01012021):')  # Бот
         # отправляет сообщение о неверной дате / The bot sends a message about the wrong date
@@ -367,187 +374,235 @@ def get_end_date(message):  # Функция получения даты око�
         # bot proceeds to the get_name_game function
 
 
-def get_name_game(message):
-    global get_name_game;
-    get_name_game = message.text
-    data.append(get_name_game)
-    bot.send_message(message.from_user.id, 'Кто организатор?')
-    bot.register_next_step_handler(message, get_orgname)
+def get_name_game(message):  # Функция получения даты названия мероприятия / Function for getting the start name of the
+    # event
+    global get_name_game_  # Объявляем глобальную переменную get_name_game для изменения ее в функции / Declare the global
+    # variable get_name_game to change it in the function
+
+    get_name_game_ = message.text  # Создаем переменную get_name_game со значением текста сообщения / Create a variable
+    # get_name_game with the value of the message text
+    data.append(get_name_game_)  # В список data добавляется значение текста сообщения / The message text value is added
+    # to the data list
+
+    bot.send_message(message.from_user.id, 'Кто организатор?')  # Бот отправляет сообщение с вопросом о
+    # организаторе мероприятия / The bot sends a message with a question about the event organizer
+    bot.register_next_step_handler(message, get_orgname)  # Бот переходит к выполнению функции get_orgname / The
+    # bot proceeds to the get_orgname function
+
+
+def get_orgname(message):  # Функция получения организатора мероприятия / The function of getting an event organizer
+    global get_orgname  # Объявляем глобальную переменную get_orgname для изменения ее в функции / Declare the global
+    # variable get_orgname to change it in the function
+    get_org_name = message.text  # Создаем переменную get_org_name со значением текста сообщения / Create a variable
+    # get_org_name with the value of the message text
+    data.append(get_org_name)  # В список data добавляется значение текста сообщения / The message text value is added
+    # to the data list
+    bot.send_message(message.from_user.id, 'Тип игры?')  # Бот отправляет сообщение с вопросом о типе игры / The bot
+    # sends a message with a question about the type of game
+    bot.register_next_step_handler(message, get_type_game)  # Бот переходит к выполнению функции get_type_game / The
+    # bot proceeds to the get_type_game function
     print(data)
 
 
-def get_orgname(message):
-    global get_orgname;
-    get_org_name = message.text
-    data.append(get_org_name)
-    bot.send_message(message.from_user.id, 'Тип игры?')
-    bot.register_next_step_handler(message, get_type_game)
-    print(data)
+def get_type_game(message):  # Функция получения типа мероприятия и имени пользователя телеграм, отправившего сообщение
+    # / Function for getting the event type and the name of the telegram user who sent the message
+    global get_type_game_  # Объявляем глобальную переменную get_type_game для изменения ее в функции / Declare the
+    # global variable get_type_game to change it in the function
+    global get_name_user  # Объявляем глобальную переменную get_name_user для изменения ее в функции / Declare the
+    # global variable get_name_user to change it in the function
+    get_type_game_ = message.text  # Создаем переменную get_type_game со значением текста сообщения / Create a variable
+    # get_type_game with the value of the message text
+    get_name_user = message.from_user.username  # Создаем переменную get_name_user со значением автора сообщения /
+    # Create a get_name_user variable with the value of the author of the message
+    data.append(get_type_game_)  # В список data добавляется значение переменной get_type_game / The value of the
+    # get_type_game variable is added to the data list
+    data.append(get_name_user)  # В список data добавляется значение переменной get_name_user / The value of the
+    # get_name_user variable is added to the data list
+    get_id_game()  # Вызываем функцию создания ID записи / Call the record ID creation function
+    list_.append(data)  # В активный лист документа добавляем значения списка data / In the active sheet of the
+    # document we add the values of the data list
+    file.save("sample.xlsx")  # Сохраняем документ / Save the document
+    sorting()  # Вызываем функцию создания сортировки записей по дате / Call the function to create a sorting of
+    # records by date
+    bot.send_message(message.from_user.id, f'Ok, записал. \U0001F194 твоей записи {data[-1]}')  # Бот отправляет
+    # сообщение что мероприятие записано / The bot sends a message that the event is recorded
 
 
-def get_type_game(message):
-    global get_type_game;
-    global get_name_user;
-    get_type_game = message.text
-    get_name_user = message.from_user.username
-    data.append(get_type_game)
-    data.append(get_name_user)
-    get_id_game()
-    list_.append(data)
-    file.save("sample.xlsx")
-    sorting()
-    bot.send_message(message.from_user.id, f'Ok, записал. \U0001F194 твоей записи {data[-1]}')
-    print(list_, "list_", data, "data")
+def get_id_game():  # Функция создания ID записи / Record ID creation function
+    global get_id_game  # Объявляем глобальную переменную get_id_game для изменения ее в функции / Declare the
+    # global variable get_id_game to change it in the function
+    id_cell = 1  # Переменная, в которую запишем максимальное значение ID / The variable where we write the maximum
+    # ID value
+    for row in range(2, list_.max_row + 1):  # Для строк со второй и до последней / For lines from the second to the
+        # last
+        for column in "H":  # Для столбца H в котором указан ID / For column H, which contains the ID
+            cell_name = "{}{}".format(column, row)  # Получаем адрес ячейки / Get the cell address
+            if list_[cell_name].value > id_cell:  # Если значение ячейки больше значения id_cell / If the value of the
+                # cell is greater than id_cell
+                id_cell = list_[cell_name].value  # Присваеваем значение ячейки переменной id_cell / Assign a cell
+                # value to the id_cell variable
+    data.append(id_cell + 1)  # В список data добавляется значение переменной id_cell + 1 / The value of the id_cell
+    # variable + 1 is added to the data list
 
 
-def get_id_game():
-    global get_id_game;
-    # id_cell = list_.cell(row=list_.max_row, column=list_.max_column - 1)
-    id_cell = 1  # Переменная, в которую запишем максимальное значение ID
-    for row in range(2, list_.max_row + 1):  # Для строк со второй и до последней
-        for column in "H":  # Для столбца H в котором указан ID
-            cell_name = "{}{}".format(column, row)  # Получаем адрес ячейки
-            if list_[cell_name].value > id_cell:  # Если значение ячейки больше значения id_cell
-                id_cell = list_[cell_name].value  # Присваеваем значение ячейки переменной id_cell
-    data.append(id_cell + 1)
+def onegame(current_date_sort):  # Функция показа ближайшего мероприятия / Function to show the next event
+    temp = []  # Временный список / Temporary list
+    result = []  # Результат / Result
+    list_row = []  # Список со значениями номера ячеек, даты которых больше текущей даты / A list with the values of
+    # the cell numbers whose dates are larger than the current date
+    search_date = current_date_sort  # Дата поиска = переданному значению / Search Date = Passed Value
 
-
-def onegame(current_date_sort):
-    temp = []  # Временный массив
-    result = []  # Результат
-    list_row = []  # Список со значениями номера ячеек, даты которых больше текущей даты
-    search_date = current_date_sort  # Дата поиска = переданному значению
-
-    for row in range(2, list_.max_row + 1):  # Для строк со второй и до последней
-        for column in "B":  # Для столбца B в котором указана дата в формате для поиска ГГГГ-мм-дд
-            cell_name = "{}{}".format(column, row)  # Получаем адрес ячейки
-            if list_[cell_name].value >= search_date:  # Если значение ячейки больше или равно текущей дате
-                list_row.append(row)  # Значение ячейки добавляем в список
+    for row in range(2, list_.max_row + 1):  # Для строк со второй и до последней / For lines from the second to the
+        # last
+        for column in "B":  # Для столбца B в котором указана дата в формате для поиска ГГГГ-мм-дд / For column B,
+            # which contains the date in search format yyyy-mm-dd
+            cell_name = "{}{}".format(column, row)  # Получаем адрес ячейки / Get the cell address
+            if list_[cell_name].value >= search_date:  # Если значение ячейки больше или равно текущей дате / If the
+                # cell value is greater than or equal to the current date
+                list_row.append(row)  # Значение ячейки добавляем в список / The cell value is added to the list
 
     for row in list_.iter_rows(min_row=list_row[0], max_col=6, max_row=list_row[0]):  # Для диапазона начиная со строки
-        # № которой идет 0 в списке дат и на протяжении всех столбцов
-        for cell in row:  # Для всех ячеек
-            temp.append(cell.value)  # Добавляем во временный список значение ячеек
+        # № которой идет 0 в списке дат и на протяжении всех столбцов / For the range starting with row № which goes 0
+        # in the date list and throughout all columns
+        for cell in row:  # Для всех ячеек / For all cells
+            temp.append(cell.value)  # Добавляем во временный список значение ячеек / Adding cell values to a temporary
+            # list
 
-    result.append(temp[0])  # Добавляем в итоговый список значение начала
-    result.append(temp[2])  # Добавляем в итоговый список значение конца
-    result.append(temp[3])  # Добавляем в итоговый список значение названия
-    result.append(temp[4])  # Добавляем в итоговый список значение организатора
-    result.append(temp[5])  # Добавляем в итоговый список значение типа
+    result.append(temp[0])  # Добавляем в итоговый список значение начала / Add the start value to the summary list
+    result.append(temp[2])  # Добавляем в итоговый список значение конца / Add an end value to the final list
+    result.append(temp[3])  # Добавляем в итоговый список значение названия / Add the value of the name to the final
+    # list
+    result.append(temp[4])  # Добавляем в итоговый список значение организатора / Add the value of the organizer to the
+    # final list
+    result.append(temp[5])  # Добавляем в итоговый список значение типа / Add a value of type to the resulting list
 
-    return result
+    return result  # Возвращаем result / Return result
 
 
-def sorting():
-    xl = pd.ExcelFile("sample.xlsx")  # Открываем pandas наш файл
-    df = xl.parse("testexel")  # Открываем pandas активный лист
-    df = df.sort_values(by="Сортировка")  # Сортируем по возрастанию столбец Сортировка (sort_date ('%Y-%m-%d'))
-    writer = pd.ExcelWriter('sample.xlsx')  # Записываем файл
+def sorting():  # Функция сортировки записей в таблице мероприятий / Function for sorting records in the table of events
+    xl = pd.ExcelFile("sample.xlsx")  # Открываем pandas наш файл / Open our pandas file
+    df = xl.parse("testexel")  # Открываем pandas активный лист / Open pandas active sheet
+    df = df.sort_values(by="Сортировка")  # Сортируем по возрастанию столбец Сортировка (sort_date ('%Y-%m-%d')) / Sort
+    # in ascending order column Sort (sort_date ('%Y-%m-%d'))
+    writer = pd.ExcelWriter('sample.xlsx')  # Записываем файл / Writing down the file
     df.to_excel(writer, sheet_name='testexel', columns=["Начало", "Сортировка", "Конец", "Название", "Организатор",
                                                         "Тип", "Владелец", "ID"],
-                index=False)  # Выбираем какие столбцы записывать
-    writer.save()  # Сохраняем
-    # Просмотр таблицы
-    for i in range(0, list_.max_row):  # Для всех строк от 0 до максимальной
-        for col in list_.iter_cols(1, list_.max_column):  # Для всех колонок от 0 до максимальной
-            print(col[i].value, end="\t\t")  # Печатаем значение ячейки
+                index=False)  # Выбираем какие столбцы записывать / Choose which columns to write
+    writer.save()  # Сохраняем / Save file
+    # Просмотр таблицы / View table
+    for i in range(0, list_.max_row):  # Для всех строк от 0 до максимальной / For all lines from 0 to the maximum
+        for col in list_.iter_cols(1, list_.max_column):  # Для всех колонок от 0 до максимальной / For all columns
+            # from 0 to maximum
+            print(col[i].value, end="\t\t")  # Печатаем значение ячейки / Print the cell value
         print('')
 
 
-def porting(message, current_date_sort):
-    global get_name_user;
-    search_date = current_date_sort  # Дата поиска = переданному значению
-    temp_name = []
-    temp_date = []
-    temp_result = []
+def porting(message, current_date_sort):  # Функция редактирования записей / Record editing function
+    global get_name_user  # Объявляем глобальную переменную get_name_user для изменения ее в функции / Declare the
+    # global variable get_name_user to change it in the function
+    search_date = current_date_sort  # Дата поиска = переданному значению / Search Date = Passed Value
+    temp_name = []  # Временный список со значением названия мероприятия / Temporary list with event name value
+    temp_date = []  # Временный список со значением даты мероприятия / Temporary list with event date value
+    temp_result = []  # Временный список с результатом / Temporary list with result
     temp = []
-    get_name_user = message.from_user.username  # Получаем имя пользователя, написавшего сообщение
-    for row in range(2, list_.max_row + 1):  # Для строк со второй и до последней
-        for column in "G":  # Для столбца G в котором указано имя пользователя, создавшего запись
-            cell_name = "{}{}".format(column, row)  # Получаем адрес ячейки
-            if list_[cell_name].value == get_name_user:  # Если значение ячейки равно имени пользователя
-                temp_name.append(row)  # Значение ячейки добавляем в список
-    print(temp_name)
-    for row in range(2, list_.max_row + 1):  # Для строк со второй и до последней
-        for column in "B":  # Для столбца B в котором указана дата в формате для поиска ГГГГ-мм-дд
-            cell_name = "{}{}".format(column, row)  # Получаем адрес ячейки
-            if list_[cell_name].value >= search_date:  # Если значение ячейки больше или равно текущей дате
-                temp_date.append(row)  # Значение ячейки добавляем в список
-    print(temp_date)
-    for i in temp_name:
-        if i in temp_date:
-            temp_result.append(i) # Итоговое значение ячейки добавляем в список
+    get_name_user = message.from_user.username  # Получаем имя пользователя, написавшего сообщение / Get the name of
+    # the user who wrote the message
+    for row in range(2, list_.max_row + 1):  # Для строк со второй и до последней / For lines from the second to the
+        # last
+        for column in "G":  # Для столбца G в котором указано имя пользователя, создавшего запись / For column G, which
+            # contains the name of the user who created the record
+            cell_name = "{}{}".format(column, row)  # Получаем адрес ячейки / Get the cell address
+            if list_[cell_name].value == get_name_user:  # Если значение ячейки равно имени пользователя / If the cell
+                # value is equal to the user name
+                temp_name.append(row)  # Значение ячейки добавляем в список / The cell value is added to the list
+
+    for row in range(2, list_.max_row + 1):  # Для строк со второй и до последней / For lines from the second to the
+        # last
+        for column in "B":  # Для столбца B в котором указана дата в формате для поиска ГГГГ-мм-дд / For column B,
+            # which contains the date in search format yyyy-mm-dd
+            cell_name = "{}{}".format(column, row)  # Получаем адрес ячейки / Get the cell address
+            if list_[cell_name].value >= search_date:  # Если значение ячейки больше или равно текущей дате / If the
+                # cell value is greater than or equal to the current date
+                temp_date.append(row)  # Значение ячейки добавляем в список / The cell value is added to the list
+
+    for i in temp_name:  # Для каждого значения в списке temp_name
+        if i in temp_date:  # Для каждого значения в списке temp_date
+            temp_result.append(i)  # Итоговое значение ячейки добавляем в список temp_result / The final value of the
+            # cell is added to the list temp_result
     print(temp_result)
 
+    for row in list_.iter_rows(min_row=temp_result[0], max_col=8, max_row=list_.max_row):  # Для диапазона начиная
+    # со строки № которой идет 0 в списке и на протяжении всех столбцов / For the range starting with row # which
+    # goes 0 in the list and throughout all columns
+        for cell in row:  # Для всех ячеек / For all cells
+            temp.append(cell.value)  # Добавляем во временный список значение ячеек / Adding cell values to a temporary
+            # list
 
-    for row in list_.iter_rows(min_row=temp_result[0], max_col=8, max_row=list_.max_row):  # Для диапазона начиная со строки
-            # № которой идет 0 в списке и на протяжении всех столбцов
-       for cell in row:  # Для всех ячеек
-            temp.append(cell.value)  # Добавляем во временный список значение ячеек
+    sep = 8  # кол-во элементов в одном внутреннем списке / Number of items in one internal list
+    result = [temp[x:x + sep] for x in range(0, len(temp), sep)]  # Разбиваем список temp на части по 8 элементов и
+    # добавляем их как вложенные списки в result / Split the temp list into parts of 8 elements and add them as
+    # sublists in result
 
-    sep = 8  # кол-во элементов в одном внутреннем списке
-    result = [temp[x:x + sep] for x in range(0, len(temp), sep)]
-    print(temp)
-    print(result)
-    return(result)
+    return result  # Возвращаем список result / Return the list result
 
-'''def edit_game(message):
-    id_game = message.text
-    print(id_game)'''
 
-def edit_buttons(message):
-    global id_game
-    id_game = message.text # В месседже получаем ID игры, которую будем редактировать
-    markup = types.InlineKeyboardMarkup()
-    button_startend_game = types.InlineKeyboardButton('Даты проведения', callback_data='даты')
-    #  button_end_game = types.InlineKeyboardButton('Конец', callback_data='конец')
-    button_name_game = types.InlineKeyboardButton('Название', callback_data='название')
-    button_type_game = types.InlineKeyboardButton('Тип', callback_data='тип')
-    button_cancel_game = types.InlineKeyboardButton('Отмена мероприятия', callback_data='отмена')
-    markup.row(button_startend_game, button_name_game)
-    markup.row(button_type_game, button_cancel_game)
-    #print(id_game, 'id_game')
-    bot.send_message(message.chat.id, 'Выбери что редактируем?', reply_markup=markup)
-    #editing(call)
+def edit_buttons(message):  # Функция вывода кнопок редактирования записи / Record edit buttons output function
+    global id_game  # Объявляем глобальную переменную id_game для изменения ее в функции / Declare the
+    # global variable id_game to change it in the function
+    id_game = message.text  # В месседже получаем ID игры, которую будем редактировать / In the message we get the ID of
+    # the game we are going to edit
+    markup = types.InlineKeyboardMarkup()  # Разметка клавиатуры / Keyboard markup
+    button_startend_game = types.InlineKeyboardButton('Даты проведения', callback_data='даты')  # Создаем кнопку Даты
+    # проведения / Create a Date button
+    button_name_game = types.InlineKeyboardButton('Название', callback_data='название')  # Создаем кнопку Название /
+    # Create a Name button
+    button_type_game = types.InlineKeyboardButton('Тип', callback_data='тип')  # Создаем кнопку Тип / Create a Type
+    # button
+    button_cancel_game = types.InlineKeyboardButton('Отмена мероприятия', callback_data='отмена')  # Создаем кнопку
+    # Отмена / Create a Cancel button
+    markup.row(button_startend_game, button_name_game)  # Создаем строку с кнопками "Даты" и "Название"
+    # / Create a line with the "Dates" and "Name" buttons
+    markup.row(button_type_game, button_cancel_game)  # Создаем строку с кнопками "Тип" и "Отмена" / Create a line with
+    # the "Type" and "Cancel" buttons
+    bot.send_message(message.chat.id, 'Выбери что редактируем?', reply_markup=markup)  # Бот отправляет сообщение
+    # с просьбой сделать выбор и нажать на кнопку / The bot sends a message with a request to make a choice and click
 
-    #bot.register_next_step_handler(message, editing)
-    # @bot.callback_query_handler(func=lambda call: True)
 
-def line_address_detection(id_game, message):
-    #print(id_game, 'id_game')
-    #print(message, 'message')
-    #bot.send_message(call.message.chat.id, f'Название {id_game}')
-    for row in range(2, list_.max_row + 1):  # Для строк со второй и до последней
-        for column in "H":  # Для столбца H в котором указано ID мероприятия
-            cell_name = "{}{}".format(column, row)  # Получаем адрес ячейки
-            string_num = "{}".format(row)  # Получаем номер строки
-            #print(cell_name)
-            #print(list_[cell_name].value)
-            if str(list_[cell_name].value) == id_game:  # Если значение в ячейке совпадает с введенным ID
-                if message == 'название':
-                #print(list_[cell_name].value)
-                    name_cell_adr = 'D' + string_num  #  Создаем переменную с адресом ячейки с названием мероприятия
-                elif message == 'тип':
-                    name_cell_adr = 'F' + string_num  # Создаем переменную с адресом ячейки с типом мероприятия
-                elif message == 'отмена':
-                    name_cell_adr = 'H' + string_num  # Создаем переменную с адресом ячейки с ID мероприятия
-                elif message == 'даты':
-                    name_cell_adr = 'A' + string_num  # Создаем переменную с адресом ячейки с началом мероприятия
-                #print(cell_name)
-                #print(string_num)
-                #print(name_cell_adr, list_[name_cell_adr].value)
-                #bot.send_message(message.chat.id, list_[name_cell_adr].value, 'Заменить на:')
-                return(name_cell_adr)  # Возвращает адрес ячейки
+def line_address_detection(id_game, message):  # Функция определения адреса ячейки / Function for determining the cell
+    # address
+    for row in range(2, list_.max_row + 1):  # Для строк со второй и до последней / For lines from the second to the
+        # last
+        for column in "H":  # Для столбца H в котором указано ID мероприятия / For column H, which contains the event ID
+            cell_name = "{}{}".format(column, row)  # Получаем адрес ячейки / Get the cell address
+            string_num = "{}".format(row)  # Получаем номер строки / Get the line number
+            if str(list_[cell_name].value) == id_game:  # Если значение в ячейке совпадает с введенным ID / If the
+                # value in the cell matches the entered ID
+                if message == 'название':  # Если в сообщениие было указано "название" / If "title" was specified in
+                    # the message
+                    name_cell_adr = 'D' + string_num  # Создаем переменную с адресом ячейки с названием мероприятия /
+                    # Create a variable with the address of the cell with the name of the event
+                elif message == 'тип':  # Если в сообщениие было указано "тип" / If "type" was specified in
+                    # the message
+                    name_cell_adr = 'F' + string_num  # Создаем переменную с адресом ячейки с типом мероприятия /
+                    # Create a variable with the address of a cell with the type of event
+                elif message == 'отмена':  # Если в сообщениие было указано "отмена" / If "cancel" was specified in
+                    # the message
+                    name_cell_adr = 'H' + string_num  # Создаем переменную с адресом ячейки с ID мероприятия / Create
+                    # a variable with the address of the event ID cell
+                elif message == 'даты':  # Если в сообщениие было указано "даты" / If "dates" was specified in
+                    # the message
+                    name_cell_adr = 'A' + string_num  # Создаем переменную с адресом ячейки с началом мероприятия /
+                    # Create a variable with the address of the cell with the beginning of the event
+                return name_cell_adr  # Возвращает адрес ячейки / Returns the cell address
 
-def correct(message, result_name_type_game):
-    #print(message.text, 'message', result_name_type_game, 'result_name_type_game')
-    list_[result_name_type_game] = message.text
-    file.save("sample.xlsx")
-    sorting()
-    bot.send_message(message.from_user.id, f'Ok, записал.')
 
-'''def correct_start_date(message, result_start_date_game):
-    print(message.text, 'message', result_start_date_game, 'result_start_date_game')'''
+def correct(message, result_name_type_game):  # Функция внесения изменений в записи файла / Function for making changes
+    # to file entries
+    list_[result_name_type_game] = message.text  # В ячейку с переданным адресом вносим изменения из текста сообщения /
+    # In the cell with the passed address we make changes from the text of the message
+    file.save("sample.xlsx")  # Сохраняем таблицу / Save the table
+    sorting()  # Запускаем функцию сортировки записей по дате / Start the function of sorting records by date
+    bot.send_message(message.from_user.id, f'Ok, записал.')  # Бот сообщает о сохранении / The bot reports on saving
 
 
 def games(current_date_sort):
